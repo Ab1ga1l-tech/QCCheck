@@ -1,35 +1,49 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { FlatList, Text, KeyboardAvoidingView, Platform } from "react-native";
 
-import ProfileHeader from "./src/components/ProfileHeader";
-import ProfileBio from "./src/components/ProfileBio";
-import FollowButton from "./src/components/FollowButton";
-import PhotoGrid from "./src/components/PhotoGrid";
-
-
+import FormEvento from "./src/components/FormEvento";
+import EventoItem from "./src/components/EventoItem";
+import EventoModal from "./src/components/EventoModal";
 
 export default function App() {
-  const [seguindo, setSeguindo] = useState(false);
-  const [seguidores, setSeguidores] = useState(120);
+  const [eventos, setEventos] = useState([]);
+  const [selecionado, setSelecionado] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  function toggleSeguir() {
-    setSeguindo(!seguindo);
-    setSeguidores(seguindo ? seguidores - 1 : seguidores + 1);
+  function adicionarEvento(evento) {
+    setEventos((prev) => [evento, ...prev]);
+  }
+
+  function abrirDetalhes(evento) {
+    setSelecionado(evento);
+    setModalVisible(true);
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <ProfileHeader seguidores={seguidores} />
-      <ProfileBio />
-      <FollowButton seguindo={seguindo} toggleSeguir={toggleSeguir} />
-      <PhotoGrid />
-    </ScrollView>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <FlatList
+        data={eventos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <EventoItem evento={item} onPress={abrirDetalhes} />
+        )}
+        ListHeaderComponent={<FormEvento onSalvar={adicionarEvento} />}
+        ListEmptyComponent={
+          <Text style={{ textAlign: "center", marginTop: 30 }}>
+            Nenhum evento cadastrado ainda
+          </Text>
+        }
+        contentContainerStyle={{ paddingBottom: 40 }}
+      />
+
+      <EventoModal
+        visible={modalVisible}
+        evento={selecionado}
+        onClose={() => setModalVisible(false)}
+      />
+    </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50,
-  },
-});
