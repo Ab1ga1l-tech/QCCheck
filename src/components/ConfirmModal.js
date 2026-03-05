@@ -1,20 +1,20 @@
 import React from "react";
 import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
 
-export default function EventoModal({ visible, evento, onClose }) {
-  if (!evento) return null;
+export default function ConfirmModal({ visible, lote, onClose }) {
+  if (!lote) return null;
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.bg}>
         <View style={styles.card}>
-          <Text style={styles.titulo}>{evento.nome}</Text>
+          <Text style={styles.titulo}>{lote.nome}</Text>
 
-          <Text>📅 Data: {evento.data}</Text>
-          <Text>👤 Responsável: {evento.responsavel}</Text>
+          <Text>📅 Data: {lote.data}</Text>
+          <Text>👤 Responsável: {lote.responsavel}</Text>
 
           <Text style={{ marginTop: 10 }}>
-            📝 {evento.descricao}
+            📝 {lote.descricao}
           </Text>
 
           <Pressable style={styles.botao} onPress={onClose}>

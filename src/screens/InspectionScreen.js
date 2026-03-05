@@ -1,96 +1,115 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
 
-export default function FormEvento({ onSalvar }) {
-  const [form, setForm] = useState({
+export default function InspectionScreen({ navigation }) {
+
+  const [values, setValues] = useState({
     nome: "",
     data: "",
     responsavel: "",
+    cargo: "",
     descricao: "",
   });
 
   function atualizar(campo, valor) {
-    setForm({ ...form, [campo]: valor });
+    setValues({ ...values, [campo]: valor });
   }
 
   function salvar() {
+
     if (
-      !form.nome.trim() ||
-      !form.data.trim() ||
-      !form.responsavel.trim() ||
-      !form.descricao.trim()
+      !values.nome ||
+      !values.data ||
+      !values.responsavel ||
+      !values.descricao
     ) {
       Alert.alert("Erro", "Preencha todos os campos!");
       return;
     }
 
-    onSalvar({
+    const novoLote = {
       id: Date.now().toString(),
-      ...form,
+      ...values,
+    };
+
+    Alert.alert("Sucesso", "Lote cadastrado!");
+
+    navigation.navigate("Lotes", {
+      novoLote: novoLote,
     });
 
-    setForm({
+    setValues({
       nome: "",
       data: "",
       responsavel: "",
+      cargo: "",
       descricao: "",
     });
-
-    Alert.alert("Sucesso", "Evento cadastrado!");
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Cadastro de Eventos</Text>
+
+      <Text style={styles.titulo}>Cadastro de Lote</Text>
 
       <TextInput
-        placeholder="Nome do Evento"
+        placeholder="Nome do Lote"
         style={styles.input}
-        value={form.nome}
+        value={values.nome}
         onChangeText={(t) => atualizar("nome", t)}
-        autoCapitalize="words"
       />
 
       <TextInput
         placeholder="Data"
         style={styles.input}
-        value={form.data}
+        value={values.data}
         onChangeText={(t) => atualizar("data", t)}
-        keyboardType="numeric"
       />
 
       <TextInput
         placeholder="Responsável"
         style={styles.input}
-        value={form.responsavel}
+        value={values.responsavel}
         onChangeText={(t) => atualizar("responsavel", t)}
+      />
+
+      <TextInput
+        placeholder="Cargo"
+        style={styles.input}
+        value={values.cargo}
+        onChangeText={(t) => atualizar("cargo", t)}
       />
 
       <TextInput
         placeholder="Descrição"
         style={[styles.input, { height: 100 }]}
-        value={form.descricao}
+        value={values.descricao}
         onChangeText={(t) => atualizar("descricao", t)}
         multiline
       />
 
       <Pressable style={styles.botao} onPress={salvar}>
-        <Text style={styles.botaoTexto}>Salvar Evento</Text>
+        <Text style={styles.botaoTexto}>Salvar Lote</Text>
       </Pressable>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+
   container: {
-    padding: 16,
+    flex: 1,
+    padding: 20,
     backgroundColor: "#f2f2f2",
   },
+
   titulo: {
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 12,
+    marginBottom: 15,
   },
+
   input: {
     backgroundColor: "#fff",
     borderWidth: 1,
@@ -99,14 +118,18 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
+
   botao: {
     backgroundColor: "#4CAF50",
     padding: 14,
     borderRadius: 8,
     alignItems: "center",
+    marginTop: 10,
   },
+
   botaoTexto: {
     color: "#fff",
     fontWeight: "bold",
   },
+
 });
