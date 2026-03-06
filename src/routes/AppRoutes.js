@@ -2,6 +2,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import LoginScreen from "../screens/LoginScreen";
 import LoteListScreen from "../screens/LoteListScreen";
 import InspectionScreen from "../screens/InspectionScreen";
 import EditLoteScreen from "../screens/EditarLoteScreen";
@@ -23,6 +24,12 @@ export default function AppRoutes() {
           },
         }}
       >
+
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name="Lotes"
