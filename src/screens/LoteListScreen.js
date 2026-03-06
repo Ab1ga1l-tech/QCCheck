@@ -1,15 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, FlatList, Text, Pressable, StyleSheet } from "react-native";
 
-export default function LoteListScreen({ navigation, route }) {
+export default function LoteListScreen({ navigation }) {
 
   const [lotes, setLotes] = useState([]);
 
-  useEffect(() => {
-    if (route.params?.novoLote) {
-      setLotes((prev) => [route.params.novoLote, ...prev]);
-    }
-  }, [route.params?.novoLote]);
+  function adicionarLote(novoLote) {
+    setLotes((prev) => [novoLote, ...prev]);
+  }
+
+  function atualizarLote(loteAtualizado) {
+    setLotes((prev) =>
+      prev.map((l) => (l.id === loteAtualizado.id ? loteAtualizado : l))
+    );
+  }
+
+  function excluirLote(id) {
+    setLotes((prev) => prev.filter((l) => l.id !== id));
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -18,11 +26,22 @@ export default function LoteListScreen({ navigation, route }) {
         data={lotes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+
+          <Pressable
+            style={styles.card}
+            onPress={() =>
+              navigation.navigate("EditarLote", {
+                lote: item,
+                atualizarLote: atualizarLote,
+                excluirLote: excluirLote,
+              })
+            }
+          >
             <Text style={styles.titulo}>{item.nome}</Text>
             <Text>📅 {item.data}</Text>
             <Text>👤 {item.responsavel}</Text>
-          </View>
+          </Pressable>
+
         )}
         ListEmptyComponent={
           <Text style={styles.empty}>
@@ -34,7 +53,11 @@ export default function LoteListScreen({ navigation, route }) {
       {/* BOTÃO FLUTUANTE */}
       <Pressable
         style={styles.fab}
-        onPress={() => navigation.navigate("NovoLote")}
+        onPress={() =>
+          navigation.navigate("NovoLote", {
+            adicionarLote: adicionarLote,
+          })
+        }
       >
         <Text style={styles.fabText}>+</Text>
       </Pressable>

@@ -4,13 +4,25 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import LoteListScreen from "../screens/LoteListScreen";
 import InspectionScreen from "../screens/InspectionScreen";
+import EditLoteScreen from "../screens/EditarLoteScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function AppRoutes() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#c2ccc2",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            fontWeight: "bold",
+          },
+        }}
+      >
 
         <Stack.Screen
           name="Lotes"
@@ -24,7 +36,14 @@ export default function AppRoutes() {
           options={{ title: "Novo Lote" }}
         />
 
+        <Stack.Screen
+          name="EditarLote"
+          component={EditLoteScreen}
+          options={{ title: "Editar Lote" }}
+        />
+
       </Stack.Navigator>
+
     </NavigationContainer>
   );
 }

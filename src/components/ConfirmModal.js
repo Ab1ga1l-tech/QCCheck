@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
 
-export default function ConfirmModal({ visible, lote, onClose }) {
+export default function ConfirmModal({ visible, lote, onClose, onConfirm }) {
   if (!lote) return null;
 
   return (
@@ -17,11 +17,21 @@ export default function ConfirmModal({ visible, lote, onClose }) {
             📝 {lote.descricao}
           </Text>
 
-          <Pressable style={styles.botao} onPress={onClose}>
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>
-              Fechar
-            </Text>
-          </Pressable>
+          <Text style={styles.alerta}>
+            Deseja realmente reprovar este lote?
+          </Text>
+
+          <View style={styles.botoes}>
+
+            <Pressable style={styles.cancelar} onPress={onClose}>
+              <Text style={styles.textoBotao}>Cancelar</Text>
+            </Pressable>
+
+            <Pressable style={styles.reprovar} onPress={onConfirm}>
+              <Text style={styles.textoBotao}>Reprovar</Text>
+            </Pressable>
+
+          </View>
         </View>
       </View>
     </Modal>
@@ -45,11 +55,33 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  botao: {
+  alerta: {
+    marginTop: 15,
+    fontWeight: "bold",
+    color: "#e53935",
+  },
+  botoes: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 20,
+  },
+  cancelar: {
+    backgroundColor: "#999",
+    padding: 12,
+    borderRadius: 8,
+    flex: 1,
+    marginRight: 10,
+    alignItems: "center",
+  },
+  reprovar: {
     backgroundColor: "#e53935",
     padding: 12,
     borderRadius: 8,
+    flex: 1,
     alignItems: "center",
+  },
+  textoBotao: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

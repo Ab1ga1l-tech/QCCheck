@@ -1,11 +1,11 @@
 import React from "react";
 import { Pressable, Text, StyleSheet } from "react-native";
 
-export default function LoteItem({ lote, onPress }) {
+export default function CheckItem({ item, onPress }) {
   return (
-    <Pressable style={styles.card} onPress={() => onPress(lote)}>
-      <Text style={styles.titulo}>{lote.nome}</Text>
-      <Text>{lote.data}</Text>
+    <Pressable style={styles.card} onPress={() => onPress(item)}>
+      <Text style={styles.titulo}>{item.nome}</Text>
+      <Text>{item.data}</Text>
     </Pressable>
   );
 }

@@ -4,8 +4,8 @@ export function useForm(initialValues) {
   const [values, setValues] = useState(initialValues);
 
   function handleChange(name, value) {
-    setValues((prev) => ({
-      ...prev,
+    setValues((prevValues) => ({
+      ...prevValues,
       [name]: value,
     }));
   }
@@ -16,7 +16,7 @@ export function useForm(initialValues) {
 
   function validate(requiredFields) {
     for (let field of requiredFields) {
-      if (!values[field] || !values[field].trim()) {
+      if (!values[field] || String(values[field]).trim() === "") {
         return false;
       }
     }

@@ -2,84 +2,93 @@ import React from "react";
 import { View, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
 import { useForm } from "../hooks/UseForm";
 
-export default function InspectionScreen({ navigation, route }) {
+export default function EditLoteScreen({ navigation, route }) {
 
-  const { values, handleChange, resetForm, validate } = useForm({
-    nome: "",
-    data: "",
-    responsavel: "",
-    cargo: "",
-    descricao: "",
+  const { lote, atualizarLote, excluirLote } = route.params;
+
+  const { values, handleChange } = useForm({
+    nome: lote.nome,
+    data: lote.data,
+    responsavel: lote.responsavel,
+    cargo: lote.cargo,
+    descricao: lote.descricao,
   });
 
-  function salvar() {
+  function salvarEdicao() {
 
-    if (!validate(["nome", "data", "responsavel", "descricao"])) {
-      Alert.alert("Erro", "Preencha todos os campos obrigatórios!");
-      return;
-    }
-
-    const novoLote = {
-      id: Date.now().toString(),
+    const loteAtualizado = {
+      ...lote,
       ...values,
     };
 
-    Alert.alert("Sucesso", "Lote cadastrado!");
+    atualizarLote(loteAtualizado);
 
-    // envia o lote para a tela anterior
-    if (route.params?.adicionarLote) {
-      route.params.adicionarLote(novoLote);
-    }
+    Alert.alert("Sucesso", "Lote atualizado!");
 
-    resetForm();
-
-    // volta automaticamente para a lista
     navigation.goBack();
+  }
+
+  function deletar() {
+
+    Alert.alert(
+      "Excluir",
+      "Deseja realmente excluir este lote?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: () => {
+            excluirLote(lote.id);
+            navigation.goBack();
+          },
+        },
+      ]
+    );
   }
 
   return (
     <View style={styles.container}>
 
-      <Text style={styles.titulo}>Cadastro de Lote</Text>
+      <Text style={styles.titulo}>Editar Lote</Text>
 
       <TextInput
-        placeholder="Nome do Lote"
         style={styles.input}
         value={values.nome}
         onChangeText={(t) => handleChange("nome", t)}
       />
 
       <TextInput
-        placeholder="Data"
         style={styles.input}
         value={values.data}
         onChangeText={(t) => handleChange("data", t)}
       />
 
       <TextInput
-        placeholder="Responsável"
         style={styles.input}
         value={values.responsavel}
         onChangeText={(t) => handleChange("responsavel", t)}
       />
 
       <TextInput
-        placeholder="Cargo"
         style={styles.input}
         value={values.cargo}
         onChangeText={(t) => handleChange("cargo", t)}
       />
 
       <TextInput
-        placeholder="Descrição"
         style={[styles.input, { height: 100 }]}
         value={values.descricao}
         onChangeText={(t) => handleChange("descricao", t)}
         multiline
       />
 
-      <Pressable style={styles.botao} onPress={salvar}>
-        <Text style={styles.botaoTexto}>Salvar Lote</Text>
+      <Pressable style={styles.botaoSalvar} onPress={salvarEdicao}>
+        <Text style={styles.botaoTexto}>Salvar Alterações</Text>
+      </Pressable>
+
+      <Pressable style={styles.botaoExcluir} onPress={deletar}>
+        <Text style={styles.botaoTexto}>Excluir Lote</Text>
       </Pressable>
 
     </View>
@@ -109,8 +118,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  botao: {
+  botaoSalvar: {
     backgroundColor: "#4CAF50",
+    padding: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
+  },
+
+  botaoExcluir: {
+    backgroundColor: "#e53935",
     padding: 14,
     borderRadius: 8,
     alignItems: "center",
