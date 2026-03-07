@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
 import { useForm } from "../hooks/UseForm";
+import ListContext from "../context/ListContext";
 
 export default function InspectionScreen({ navigation, route }) {
-
+  const { addListItem } = React.useContext(ListContext);
   const { values, handleChange, resetForm, validate } = useForm({
     nome: "",
     data: "",
@@ -12,7 +13,7 @@ export default function InspectionScreen({ navigation, route }) {
     descricao: "",
   });
 
-  function salvar() {
+  async function salvar() {
 
     if (!validate(["nome", "data", "responsavel", "descricao"])) {
       Alert.alert("Erro", "Preencha todos os campos obrigatórios!");
@@ -23,13 +24,9 @@ export default function InspectionScreen({ navigation, route }) {
       id: Date.now().toString(),
       ...values,
     };
+    await addListItem(novoLote);
 
     Alert.alert("Sucesso", "Lote cadastrado!");
-
-    // envia o lote para a tela anterior
-    if (route.params?.adicionarLote) {
-      route.params.adicionarLote(novoLote);
-    }
 
     resetForm();
 
@@ -50,7 +47,7 @@ export default function InspectionScreen({ navigation, route }) {
       />
 
       <TextInput
-        placeholder="Data"
+        placeholder="Data (DD/MM/AAAA)"
         style={styles.input}
         value={values.data}
         onChangeText={(t) => handleChange("data", t)}

@@ -1,10 +1,13 @@
 import React from "react";
 import { View, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
 import { useForm } from "../hooks/UseForm";
+import ListContext from "../context/ListContext";
 
 export default function EditLoteScreen({ navigation, route }) {
 
-  const { lote, atualizarLote, excluirLote } = route.params;
+  const {lote} = route.params; 
+  const { updateListItem, removeListItem } = React.useContext(ListContext);
+ 
 
   const { values, handleChange } = useForm({
     nome: lote.nome,
@@ -14,14 +17,14 @@ export default function EditLoteScreen({ navigation, route }) {
     descricao: lote.descricao,
   });
 
-  function salvarEdicao() {
+  async function salvarEdicao() {
 
     const loteAtualizado = {
       ...lote,
       ...values,
     };
 
-    atualizarLote(loteAtualizado);
+    await updateListItem(loteAtualizado);
 
     Alert.alert("Sucesso", "Lote atualizado!");
 
@@ -38,8 +41,8 @@ export default function EditLoteScreen({ navigation, route }) {
         {
           text: "Excluir",
           style: "destructive",
-          onPress: () => {
-            excluirLote(lote.id);
+          onPress: async () => {
+            await removeListItem(lote.id);
             navigation.goBack();
           },
         },
@@ -56,30 +59,35 @@ export default function EditLoteScreen({ navigation, route }) {
         style={styles.input}
         value={values.nome}
         onChangeText={(t) => handleChange("nome", t)}
+        placeholder="Nome do Lote"
       />
 
       <TextInput
         style={styles.input}
         value={values.data}
         onChangeText={(t) => handleChange("data", t)}
+        placeholder="Data (DD/MM/AAAA)"
       />
 
       <TextInput
         style={styles.input}
         value={values.responsavel}
         onChangeText={(t) => handleChange("responsavel", t)}
+        placeholder="Responsável"
       />
 
       <TextInput
         style={styles.input}
         value={values.cargo}
         onChangeText={(t) => handleChange("cargo", t)}
+        placeholder="Cargo" 
       />
 
       <TextInput
         style={[styles.input, { height: 100 }]}
         value={values.descricao}
         onChangeText={(t) => handleChange("descricao", t)}
+        placeholder="Descrição"   
         multiline
       />
 

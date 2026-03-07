@@ -5,83 +5,53 @@ export default function ConfirmModal({ visible, lote, onClose, onConfirm }) {
   if (!lote) return null;
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType="fade" transparent>
       <View style={styles.bg}>
         <View style={styles.card}>
-          <Text style={styles.titulo}>{lote.nome}</Text>
-
-          <Text>📅 Data: {lote.data}</Text>
-          <Text>👤 Responsável: {lote.responsavel}</Text>
-
-          <Text style={{ marginTop: 10 }}>
-            📝 {lote.descricao}
-          </Text>
-
-          <Text style={styles.alerta}>
-            Deseja realmente reprovar este lote?
-          </Text>
-
-          <View style={styles.botoes}>
-
-            <Pressable style={styles.cancelar} onPress={onClose}>
-              <Text style={styles.textoBotao}>Cancelar</Text>
+          <Text style={styles.titulo}>Definir Status: {lote.nome}</Text>
+          
+          <View style={styles.gridBotoes}>
+            {/* APROVAR */}
+            <Pressable 
+              style={[styles.btnStatus, { backgroundColor: "#4CAF50" }]} 
+              onPress={() => onConfirm("Aprovado", "#4CAF50")}
+            >
+              <Text style={styles.txtBtn}>Aprovar</Text>
             </Pressable>
 
-            <Pressable style={styles.reprovar} onPress={onConfirm}>
-              <Text style={styles.textoBotao}>Reprovar</Text>
+            {/* PENDENTE */}
+            <Pressable 
+              style={[styles.btnStatus, { backgroundColor: "#FFC107" }]} 
+              onPress={() => onConfirm("Pendente", "#FFC107")}
+            >
+              <Text style={styles.txtBtn}>Pendente</Text>
             </Pressable>
 
+            {/* REPROVAR */}
+            <Pressable 
+              style={[styles.btnStatus, { backgroundColor: "#e53935" }]} 
+              onPress={() => onConfirm("Reprovado", "#e53935")}
+            >
+              <Text style={styles.txtBtn}>Reprovar</Text>
+            </Pressable>
           </View>
+
+          <Pressable style={styles.btnCancelar} onPress={onClose}>
+            <Text style={{ color: "#666" }}>Cancelar</Text>
+          </Pressable>
         </View>
       </View>
     </Modal>
   );
 }
 
+// Estilos do Modal
 const styles = StyleSheet.create({
-  bg: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    padding: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-  },
-  titulo: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  alerta: {
-    marginTop: 15,
-    fontWeight: "bold",
-    color: "#e53935",
-  },
-  botoes: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-  cancelar: {
-    backgroundColor: "#999",
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    marginRight: 10,
-    alignItems: "center",
-  },
-  reprovar: {
-    backgroundColor: "#e53935",
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    alignItems: "center",
-  },
-  textoBotao: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  bg: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", padding: 20 },
+  card: { backgroundColor: "#fff", borderRadius: 15, padding: 20, alignItems: "center" },
+  titulo: { fontSize: 18, fontWeight: "bold", marginBottom: 20 },
+  gridBotoes: { width: "100%", gap: 10 },
+  btnStatus: { padding: 15, borderRadius: 8, alignItems: "center", width: "100%" },
+  txtBtn: { color: "#fff", fontWeight: "bold" },
+  btnCancelar: { marginTop: 20, padding: 10 }
 });

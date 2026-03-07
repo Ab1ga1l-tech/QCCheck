@@ -1,12 +1,14 @@
 import React from "react";
-import { Pressable, Text, StyleSheet } from "react-native";
+import {View, Pressable, Text, StyleSheet } from "react-native";
 
 export default function CheckItem({ item, onPress }) {
   return (
     <Pressable style={styles.card} onPress={() => onPress(item)}>
-      <Text style={styles.titulo}>{item.nome}</Text>
-      <Text>{item.data}</Text>
+      <Text style={[styles.titulo, item.status === "Reprovado" && { color: 'red' }]}>
+      {item.nome} {item.status === "Reprovado" ? "(REPROVADO)" : ""}
+      </Text>
     </Pressable>
+    
   );
 }
 
