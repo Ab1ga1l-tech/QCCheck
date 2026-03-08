@@ -1,9 +1,11 @@
-import React from "react";
+import React,{ useRef } from "react";
 import { View, Text, TextInput, Pressable, Alert, StyleSheet } from "react-native";
 import { useForm } from "../hooks/UseForm";
+import { globalStyles } from "../styles/globalstyles";
+import ListContext from "../context/ListContext";
 
 export default function InspectionScreen({ navigation, route }) {
-
+  const { addListItem } = React.useContext(ListContext);
   const { values, handleChange, resetForm, validate } = useForm({
     nome: "",
     data: "",
@@ -12,7 +14,12 @@ export default function InspectionScreen({ navigation, route }) {
     descricao: "",
   });
 
-  function salvar() {
+  const refData = useRef(null)
+  const refResp = useRef(null)
+  const refCargo = useRef(null)
+  const refDesc = useRef(null)
+
+  async function salvar() {
 
     if (!validate(["nome", "data", "responsavel", "descricao"])) {
       Alert.alert("Erro", "Preencha todos os campos obrigatórios!");
@@ -23,13 +30,9 @@ export default function InspectionScreen({ navigation, route }) {
       id: Date.now().toString(),
       ...values,
     };
+    await addListItem(novoLote);
 
     Alert.alert("Sucesso", "Lote cadastrado!");
-
-    // envia o lote para a tela anterior
-    if (route.params?.adicionarLote) {
-      route.params.adicionarLote(novoLote);
-    }
 
     resetForm();
 
@@ -38,48 +41,64 @@ export default function InspectionScreen({ navigation, route }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[globalStyles.container, styles.container]}>
 
-      <Text style={styles.titulo}>Cadastro de Lote</Text>
+      <Text style={globalStyles.titulo1}>Cadastro de Lote</Text>
 
       <TextInput
         placeholder="Nome do Lote"
-        style={styles.input}
+        style={globalStyles.input}
         value={values.nome}
+        returnKeyType="next"
         onChangeText={(t) => handleChange("nome", t)}
+        onSubmitEditing={() => refData.current.focus()}
       />
 
       <TextInput
-        placeholder="Data"
-        style={styles.input}
+        placeholder="Data (DD/MM/AAAA)"
+        style={globalStyles.input}
         value={values.data}
+        ref={refData}
+        returnKeyType="next"
         onChangeText={(t) => handleChange("data", t)}
+        onSubmitEditing={() => refResp.current.focus()}
       />
 
       <TextInput
         placeholder="Responsável"
-        style={styles.input}
+        style={globalStyles.input}
         value={values.responsavel}
+        ref={refResp}
+        returnKeyType="next"
         onChangeText={(t) => handleChange("responsavel", t)}
+        onSubmitEditing={() => refCargo.current.focus()}
       />
 
       <TextInput
         placeholder="Cargo"
-        style={styles.input}
+        style={globalStyles.input}
         value={values.cargo}
+        ref={refCargo}
+        returnKeyType="next"
         onChangeText={(t) => handleChange("cargo", t)}
+        onSubmitEditing={() => refDesc.current.focus()}
       />
 
       <TextInput
         placeholder="Descrição"
-        style={[styles.input, { height: 100 }]}
+        style={[globalStyles.input, { height: 100 }]}
         value={values.descricao}
+        ref={refDesc}
         onChangeText={(t) => handleChange("descricao", t)}
         multiline
       />
 
-      <Pressable style={styles.botao} onPress={salvar}>
-        <Text style={styles.botaoTexto}>Salvar Lote</Text>
+      <Pressable style={globalStyles.button} onPress={salvar}>
+        <Text style={globalStyles.botaoTexto}>Salvar Lote</Text>
+      </Pressable>
+
+      <Pressable style={[globalStyles.button, styles.button]} onPress={() => navigation.goBack()}>
+        <Text style={[globalStyles.botaoTexto, styles.textButton]}>Cancelar</Text>
       </Pressable>
 
     </View>
@@ -87,39 +106,19 @@ export default function InspectionScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-
   container: {
-    flex: 1,
-    padding: 20,
+    justifyContent: 'center',
+    margin: 24,
+    padding: 0,
+    gap: 7
+  },
+  button: {
     backgroundColor: "#f2f2f2",
-  },
-
-  titulo: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-
-  input: {
-    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
+    borderColor: "#cfcfcf"
   },
-
-  botao: {
-    backgroundColor: "#4CAF50",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-
-  botaoTexto: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
+  textButton: {
+    color: '#000',
+    fontWeight: 'bold'
+  }
 });

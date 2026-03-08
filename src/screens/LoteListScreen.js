@@ -1,110 +1,151 @@
-import React, { useState } from "react";
-import { View, FlatList, Text, Pressable, StyleSheet } from "react-native";
+import React, { useState, useContext } from "react";
+import { View, FlatList, Text, Pressable, Alert, StyleSheet } from "react-native";
+import ListContext from "../context/ListContext";
+import ConfirmModal from "../components/ConfirmModal"; 
+import AuthContext from "../context/AutoContext";
+import { globalStyles } from "../styles/globalstyles";
 
 export default function LoteListScreen({ navigation }) {
-
-  const [lotes, setLotes] = useState([]);
-
-  function adicionarLote(novoLote) {
-    setLotes((prev) => [novoLote, ...prev]);
+  const { list, updateListItem } = useContext(ListContext);
+  const { signOut } = useContext(AuthContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [loteSelecionado, setLoteSelecionado] = useState(null);
+  
+  async function mudarStatus(status, cor) {
+    if (loteSelecionado) {
+      const loteAtualizado = { ...loteSelecionado, status, cor };
+      await updateListItem(loteAtualizado);
+      setModalVisible(false);
+      setLoteSelecionado(null);
+    }
+  }
+  
+  function abrirModal(item) {
+    setLoteSelecionado(item);
+    setModalVisible(true);
   }
 
-  function atualizarLote(loteAtualizado) {
-    setLotes((prev) =>
-      prev.map((l) => (l.id === loteAtualizado.id ? loteAtualizado : l))
+  function alertaSignOut() {
+    Alert.alert(
+      "Saindo",
+      "Deseja realmente sair da conta?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sair",
+          style: "destructive",
+          onPress: async () => {
+            signOut();
+          },
+        },
+      ]
     );
   }
 
-  function excluirLote(id) {
-    setLotes((prev) => prev.filter((l) => l.id !== id));
-  }
-
   return (
-    <View style={{ flex: 1 }}>
-
+    <View style={[globalStyles.container]}>
+      <View style={styles.userArea}>
+        <Pressable 
+          style={[styles.botaoIcone, { backgroundColor: "#8b8b8b" }]} 
+          onPress={alertaSignOut}
+        >
+          <Text style={styles.textoIcone}>👤</Text>
+        </Pressable>
+        <Text style={globalStyles.titulo2}>admin@gmail.com</Text>
+      </View>
       <FlatList
-        data={lotes}
+        data={list || []}
+        style={{flex: 1}}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }} // Espaço extra para o botão não cobrir o último item
         renderItem={({ item }) => (
+          <View style={styles.containerItem}>
+            <View style={{ flex: 1 }}>
+              <Text style={[globalStyles.titulo2, { color: item.cor || "#333" , textAlign: 'left'}]}>
+                {item.nome}
+              </Text>
+              <Text style={[globalStyles.subtitulo, {textAlign: 'left'}]}>
+                {item.status || "Pendente"}
+              </Text>
+            </View>
 
-          <Pressable
-            style={styles.card}
-            onPress={() =>
-              navigation.navigate("EditarLote", {
-                lote: item,
-                atualizarLote: atualizarLote,
-                excluirLote: excluirLote,
-              })
-            }
-          >
-            <Text style={styles.titulo}>{item.nome}</Text>
-            <Text>📅 {item.data}</Text>
-            <Text>👤 {item.responsavel}</Text>
-          </Pressable>
+            <View style={styles.areaBotoes}>
+              <Pressable 
+                style={[styles.botaoIcone, { backgroundColor: "#2196F3" }]} 
+                onPress={() => navigation.navigate("EditarLote", { lote: item })}
+              >
+                <Text style={styles.textoIcone}>✏️</Text>
+              </Pressable>
 
+              <Pressable 
+                style={[styles.botaoIcone, { backgroundColor: "#4CAF50" }]} 
+                onPress={() => abrirModal(item)}
+              >
+                <Text style={styles.textoIcone}>✔️</Text>
+              </Pressable>
+            </View>
+          </View>
         )}
-        ListEmptyComponent={
-          <Text style={styles.empty}>
-            Nenhum lote cadastrado
-          </Text>
-        }
+        ListEmptyComponent={<Text style={styles.empty}>Nenhum lote cadastrado</Text>}
       />
 
-      {/* BOTÃO FLUTUANTE */}
-      <Pressable
-        style={styles.fab}
-        onPress={() =>
-          navigation.navigate("NovoLote", {
-            adicionarLote: adicionarLote,
-          })
-        }
-      >
-        <Text style={styles.fabText}>+</Text>
-      </Pressable>
+      <ConfirmModal 
+        visible={modalVisible}
+        lote={loteSelecionado}
+        onClose={() => setModalVisible(false)}
+        onConfirm={(status, cor) => mudarStatus(status, cor)}
+      />
 
+      {/* BOTÃO ADICIONAR (FAB) */}
+      <Pressable 
+        style={[globalStyles.button]}
+        onPress={() => navigation.navigate("NovoLote")}
+      >
+        <Text style={globalStyles.botaoTexto}>Adicionar Lote</Text>
+      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
-  empty: {
-    textAlign: "center",
-    marginTop: 50,
-    fontSize: 16,
+  container: {
+    flexDirection: 'column',
+    margin: 24,
+    padding: 0,
+    marginTop: 34
   },
-
-  card: {
+  userArea: {
+    flex: 1,
+    gap: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxHeight: 70
+  },
+  userText: {
+    textAlign: 'center'
+  },
+  containerItem: {
     backgroundColor: "#fff",
-    padding: 14,
-    marginHorizontal: 16,
-    marginTop: 10,
-    borderRadius: 8,
-    elevation: 2,
-  },
-
-  titulo: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  fab: {
-    position: "absolute",
-    bottom: 30,
-    right: 20,
-    backgroundColor: "#4CAF50",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    elevation: 4,
+    padding: 15,
+    marginTop: 10,
+    borderRadius: 10,
+    elevation: 3,
+    shadowColor: "#000", // Sombras para iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
-
-  fabText: {
-    color: "#fff",
-    fontSize: 30,
-    fontWeight: "bold",
+  areaBotoes: { flexDirection: "row", gap: 8 },
+  botaoIcone: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center"
   },
-
+  textoIcone: { color: "#fff", fontSize: 16 },
+  empty: { textAlign: "center", marginTop: 50, fontSize: 16, color: "#999" }
 });

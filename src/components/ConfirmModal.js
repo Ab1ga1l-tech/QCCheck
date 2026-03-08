@@ -1,36 +1,44 @@
 import React from "react";
 import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
+import { globalStyles } from "../styles/globalstyles";
 
 export default function ConfirmModal({ visible, lote, onClose, onConfirm }) {
   if (!lote) return null;
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
+    <Modal visible={visible} animationType="fade" transparent>
       <View style={styles.bg}>
         <View style={styles.card}>
-          <Text style={styles.titulo}>{lote.nome}</Text>
-
-          <Text>📅 Data: {lote.data}</Text>
-          <Text>👤 Responsável: {lote.responsavel}</Text>
-
-          <Text style={{ marginTop: 10 }}>
-            📝 {lote.descricao}
-          </Text>
-
-          <Text style={styles.alerta}>
-            Deseja realmente reprovar este lote?
-          </Text>
-
-          <View style={styles.botoes}>
-
-            <Pressable style={styles.cancelar} onPress={onClose}>
-              <Text style={styles.textoBotao}>Cancelar</Text>
+          <Text style={[globalStyles.titulo2, {fontSize: 20}]}>Definir Status ({lote.nome})</Text>
+          
+          <View style={styles.gridBotoes}>
+            {/* APROVAR */}
+            <Pressable 
+              style={[globalStyles.button, { backgroundColor: "#00b90f" }]} 
+              onPress={() => onConfirm("Aprovado", "#4CAF50")}
+            >
+              <Text style={globalStyles.botaoTexto}>Aprovar</Text>
             </Pressable>
 
-            <Pressable style={styles.reprovar} onPress={onConfirm}>
-              <Text style={styles.textoBotao}>Reprovar</Text>
+            {/* PENDENTE */}
+            <Pressable 
+              style={[globalStyles.button, { backgroundColor: "#b9b900" }]} 
+              onPress={() => onConfirm("Pendente", "#FFC107")}
+            >
+              <Text style={globalStyles.botaoTexto}>Pendente</Text>
             </Pressable>
 
+            {/* REPROVAR */}
+            <Pressable 
+              style={[globalStyles.button, { backgroundColor: "#b90000" }]} 
+              onPress={() => onConfirm("Reprovado", "#e53935")}
+            >
+              <Text style={globalStyles.botaoTexto}>Reprovar</Text>
+            </Pressable>
+
+            <Pressable style={[globalStyles.button, styles.button]} onPress={onClose}>
+              <Text style={[globalStyles.botaoTexto, {color: '#000'}]}>Cancelar</Text>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -38,50 +46,28 @@ export default function ConfirmModal({ visible, lote, onClose, onConfirm }) {
   );
 }
 
+// Estilos do Modal
 const styles = StyleSheet.create({
-  bg: {
+  bg:{
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
-    padding: 20,
+    padding: 20
   },
-  card: {
+  card:{
     backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 15,
     padding: 20,
-  },
-  titulo: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  alerta: {
-    marginTop: 15,
-    fontWeight: "bold",
-    color: "#e53935",
-  },
-  botoes: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-  },
-  cancelar: {
-    backgroundColor: "#999",
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    marginRight: 10,
     alignItems: "center",
+    gap: 16 
   },
-  reprovar: {
-    backgroundColor: "#e53935",
-    padding: 12,
-    borderRadius: 8,
-    flex: 1,
-    alignItems: "center",
+  gridBotoes:{
+    width: "100%",
+    gap: 10
   },
-  textoBotao: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
+  button: {
+    borderWidth: 1,
+    backgroundColor: "#f2f2f2",
+    borderColor: "#cfcfcf"
+  }
 });

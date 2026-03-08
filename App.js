@@ -1,6 +1,17 @@
 import React from "react";
-import AppRoutes from "./src/routes/AppRoutes";
-
+import { NavigationContainer } from "@react-navigation/native" ;
+import { AuthProvider } from "./src/context/AutoContext";
+import { ListProvider } from "./src/context/ListContext";
+import AppRoutes from "./src/routes/AppRoutes"; 
 export default function App() {
-  return <AppRoutes />;
+  return (
+    <NavigationContainer>
+      
+      <AuthProvider>
+        <ListProvider>
+          <AppRoutes />
+        </ListProvider>
+      </AuthProvider>
+    </NavigationContainer>
+  );
 }
