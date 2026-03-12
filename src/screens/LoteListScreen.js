@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, FlatList, Text, Pressable, Alert, StyleSheet } from "react-native";
+import { View, FlatList, Text, Pressable, Alert, StyleSheet,Image } from "react-native";
 import ListContext from "../context/ListContext";
 import ConfirmModal from "../components/ConfirmModal"; 
 import AuthContext from "../context/AutoContext";
@@ -49,7 +49,10 @@ export default function LoteListScreen({ navigation }) {
           style={[styles.botaoIcone, { backgroundColor: "#8b8b8b" }]} 
           onPress={alertaSignOut}
         >
-          <Text style={styles.textoIcone}>👤</Text>
+          <Image 
+            source={{ uri: 'https://jpimg.com.br/uploads/2020/01/o-maskara.jpg' }} 
+            style={styles.fotoPerfil} 
+          />
         </Pressable>
         <Text style={globalStyles.titulo2}>admin@gmail.com</Text>
       </View>
@@ -145,6 +148,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center"
+  },
+  fotoPerfil: {
+    width: 50,           // Largura
+    height: 50,          // Altura (deve ser igual à largura)
+    borderRadius: 50,     // Metade do valor acima
+    borderWidth: 2,       // Opcional: borda ao redor
+    borderColor: '#FFF',  // Opcional: cor da borda
   },
   textoIcone: { color: "#fff", fontSize: 16 },
   empty: { textAlign: "center", marginTop: 50, fontSize: 16, color: "#999" }
